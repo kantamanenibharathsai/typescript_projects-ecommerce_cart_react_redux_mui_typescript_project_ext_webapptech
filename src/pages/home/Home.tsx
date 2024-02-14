@@ -1,24 +1,12 @@
 import { Box, Typography, Button } from "@mui/material";
 import homeStyles from "./Home.Styles";
-import React, { useState, useEffect } from "react";
-import Product from "../../components/each_product/EachProduct";
+import React, { useEffect } from "react";
+import EachProduct from "../../components/each_product/EachProduct";
 import { ThreeDots as Loader } from "react-loader-spinner";
 import Navbar from "../../components/navbar/Navbar";
-import { useNavigate } from "react-router-dom";
-
-interface ProductObj {
-  id: number;
-  title: string;
-  description: string;
-  brand: string;
-  category: string;
-  images: string[];
-  price: number;
-  rating: number;
-  stock: number;
-  thumbnail: string;
-  discountPercentage: number;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/Store";
+import { getProducts } from "../../store/ProductSlice";
 
 const apiStatusConstants = {
   initial: "INITIAL",
@@ -27,50 +15,24 @@ const apiStatusConstants = {
   inProgress: "IN_PROGRESS",
 };
 
-interface IState {
-  apiProductsData: { limit: number; products: ProductObj[] };
-  apiErrorMsg: string;
-  apiStatus: string;
-}
 const Home: React.FC = () => {
-  const [apiProductsData, setApiProductsData] = useState<
-    IState["apiProductsData"]
-  >({ limit: 0, products: [] });
-  const [apiErrorMsg, setApiErrorMsg] = useState<IState["apiErrorMsg"]>("");
-  const [apiStatus, setApiStatus] = useState<IState["apiStatus"]>(
-    apiStatusConstants.initial
+  const dispatch = useDispatch<AppDispatch>();
+  const apiProductsData = useSelector(
+    (state: RootState) => state.items.products
   );
-  const navigate = useNavigate();
+  const apiStatus = useSelector(
+    (state: RootState) => state.items.allProductsApiStatus
+  );
 
   useEffect(() => {
-    setApiStatus(apiStatusConstants.inProgress);
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://dummyjson.com/products");
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          setApiStatus(apiStatusConstants.success);
-          setApiProductsData(data);
-        } else {
-          throw new Error("API Call Failed");
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          setApiStatus(apiStatusConstants.failure);
-          setApiErrorMsg(error.message);
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
+    dispatch(getProducts());
+  }, [dispatch]);
 
   const renderProductsSuccessView = () => {
     return (
       <Box component="ul" sx={homeStyles.unorderedList}>
-        {apiProductsData.products.map((eachProduct: ProductObj) => (
-          <Product key={eachProduct.id} eachProduct={eachProduct} />
+        {apiProductsData.map((eachProduct) => (
+          <EachProduct key={eachProduct.id} eachProduct={eachProduct} />
         ))}
       </Box>
     );
@@ -79,7 +41,7 @@ const Home: React.FC = () => {
   const renderProductsFailureView = () => {
     return (
       <Box sx={homeStyles.failureContainer}>
-        <Typography sx={homeStyles.apiErrorMsg}>{apiErrorMsg}</Typography>
+        <Typography sx={homeStyles.apiErrorMsg}>apiErrorMsg</Typography>
       </Box>
     );
   };
@@ -114,7 +76,7 @@ const Home: React.FC = () => {
           <Typography component={"p"} sx={homeStyles.showingResultsText}>
             Showing all{" "}
             <Box sx={homeStyles.spanElLimit} component="span">
-              {apiProductsData.limit}
+              {apiProductsData.length}
             </Box>{" "}
             results
           </Typography>

@@ -4,8 +4,10 @@ import "./App.css";
 import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import ProductDetails from "./components/product_details/ProductDetails";
-import PrivateRoutes from "./AuthHoc";
 import { ThemeProvider, createTheme } from "@mui/material";
+import ProtectedRoute from "./ProtectedRoute";
+import CartItem from "./components/cart_item/CartItem";
+import EachProduct from "./components/each_product/EachProduct";
 
 const theme = createTheme({
   typography: {
@@ -13,21 +15,43 @@ const theme = createTheme({
   },
 });
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<PrivateRoutes />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/product-details/:id" element={<ProductDetails />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
-  );
-}
 
+
+const App = () => {
+  return (
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+      
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                }
+              />
+               /* <Route
+                path="/productdetails/:id"
+                element={
+                  <ProtectedRoute>
+                    <EachProduct/>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cart"
+                element={
+                  <ProtectedRoute>
+                    <CartItem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+
+      );
+};
 export default App;

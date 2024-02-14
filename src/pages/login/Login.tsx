@@ -5,6 +5,9 @@ import loginImg from "../../assets/loginImg.png";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/Store";
+import { loginSubmission } from "../../store/LoginSlice";
 
 interface ILoginFormState {
   email: string;
@@ -14,14 +17,17 @@ interface ILoginFormState {
 }
 
 const Login: React.FC = () => {
-  console.log("login");
   const [formState, setFormState] = useState<ILoginFormState>({
     email: "",
     password: "",
     isPasswordVisible: false,
     authenticateText: "",
   });
+  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate();
+  const apiStatus = useSelector(
+    (state: RootState) => state.login.apiStatus
+  );
 
   React.useEffect(() => {
     const token = JSON.parse(localStorage.getItem("token") ?? "null");
@@ -52,37 +58,40 @@ const Login: React.FC = () => {
 
   const authenticateUser = async () => {
     const { email, password } = formState;
-    navigate("/");
-    try {
-      const response = await fetch("https://reqres.in/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  
+    // try {
+    //   const response = await fetch("https://reqres.in/api/login", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ email, password }),
+    //   });
 
-      if (response.ok) {
-        const data = await response.json();
-        const token = data.token;
-        setFormState((prevState) => ({
-          ...prevState,
-          authenticateText: "Login Successful",
-        }));
-        localStorage.setItem("token", JSON.stringify(token));
-        navigate("/");
-      } else {
-        setFormState((prevState) => ({
-          ...prevState,
-          authenticateText: "Invalid email or password",
-        }));
-      }
-    } catch (error: any) {
-      setFormState((prevState) => ({
-        ...prevState,
-        authenticateText: error.message,
-      }));
-    }
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     const token = data.token;
+    //     setFormState((prevState) => ({
+    //       ...prevState,
+    //       authenticateText: "Login Successful",
+    //     }));
+    //     localStorage.setItem("token", JSON.stringify(token));
+    //     navigate("/");
+    //   } else {
+    //     setFormState((prevState) => ({
+    //       ...prevState,
+    //       authenticateText: "Invalid email or password",
+    //     }));
+    //   }
+    // } catch (error: any) {
+    //   setFormState((prevState) => ({
+    //     ...prevState,
+    //     authenticateText: error.message,
+    //   }));
+    // }
+    dispatch(loginSubmission({ email, password }))
+    if (apiStatus === "SUCCESS") navigate("/")
+
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

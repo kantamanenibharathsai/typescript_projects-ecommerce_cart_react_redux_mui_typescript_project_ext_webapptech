@@ -99,7 +99,7 @@ const ProductDetails = () => {
         }
       }
     })();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (
@@ -196,25 +196,25 @@ const ProductDetails = () => {
                       ADD TO CART
                     </Button>
                   </Box>
-                  {iscartBtnClicked && (
-                    <Box sx={productDetailsStyles.increDecreBtnsContainer}>
-                      <Box
-                        component="button"
-                        sx={productDetailsStyles.quantityBtn}
-                      >
-                        -
-                      </Box>
-                      <Box component="button" sx={productDetailsStyles.text}>
-                        1
-                      </Box>
-                      <Box
-                        component="button"
-                        sx={productDetailsStyles.quantityBtn}
-                      >
-                        +
-                      </Box>
+
+                  <Box sx={productDetailsStyles.increDecreBtnsContainer}>
+                    <Box
+                      component="button"
+                      sx={productDetailsStyles.quantityBtn}
+                    >
+                      -
                     </Box>
-                  )}
+                    <Box component="button" sx={productDetailsStyles.text}>
+                      1
+                    </Box>
+                    <Box
+                      component="button"
+                      sx={productDetailsStyles.quantityBtn}
+                    >
+                      +
+                    </Box>
+                  </Box>
+
                 </Box>
 
                 <Box

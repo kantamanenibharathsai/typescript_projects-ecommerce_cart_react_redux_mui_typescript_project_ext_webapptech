@@ -8,7 +8,7 @@ import { autoPlay } from "react-swipeable-views-utils"; // npm i --save-dev @typ
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 interface MyProps {
-  carouselImages?: string[] | undefined;
+  carouselImages: string[] | undefined;
 }
 
 function SwipeableTextMobileStepper(props: MyProps) {
@@ -64,3 +64,4 @@ function SwipeableTextMobileStepper(props: MyProps) {
 }
 
 export default SwipeableTextMobileStepper;
+
